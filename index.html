@@ -279,6 +279,18 @@
         e.preventDefault();
     });
 
+    // Click events as backup for mobile
+    let clickCount = 0;
+    button.addEventListener("click", (e) => {
+        clickCount++;
+        if (clickCount % 2 === 1) {
+            count++;
+        } else {
+            count--;
+        }
+        updateCounter();
+    });
+
     function updateCounter() {
         countDisplay.textContent = count;
         countDisplay.classList.add('count-animate');
