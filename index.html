@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag Counter App</title>
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="manifest" href="manifest.json">
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+    
+    * {
+        box-sizing: border-box;
+    }
+    
+    body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        background-size: 400% 400%;
+        animation: gradientShift 8s ease infinite;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    body::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .container {
+        text-align: center;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(20px);
+        border-radius: 32px;
+        padding: 60px 50px;
+        box-shadow: 
+            0 25px 50px rgba(0, 0, 0, 0.15),
+            0 0 0 1px rgba(255, 255, 255, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        transform: translateY(0);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+        border-radius: 32px;
+        pointer-events: none;
+    }
+
+    .container:hover {
+        transform: translateY(-5px);
+        box-shadow: 
+            0 35px 70px rgba(0, 0, 0, 0.2),
+            0 0 0 1px rgba(255, 255, 255, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+
+    h1 {
+        font-size: 24px;
+        font-weight: 300;
+        color: rgba(255, 255, 255, 0.9);
+        margin: 0 0 40px 0;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    #count {
+        font-size: 96px;
+        font-weight: 800;
+        margin-bottom: 50px;
+        color: white;
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        position: relative;
+    }
+
+    #dragButton {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 50%, #ff9ff3 100%);
+        color: white;
+        font-size: 56px;
+        font-weight: 300;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        cursor: grab;
+        user-select: none;
+        margin: 0 auto;
+        box-shadow: 
+            0 20px 40px rgba(238, 90, 36, 0.3),
+            0 0 0 1px rgba(255, 255, 255, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    #dragButton::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.6s;
+    }
+
+    #dragButton:hover {
+        transform: translateY(-8px) scale(1.08);
+        box-shadow: 
+            0 30px 60px rgba(238, 90, 36, 0.4),
+            0 0 0 1px rgba(255, 255, 255, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+    
+    #dragButton:hover::before {
+        left: 100%;
+    }
+
+    #dragButton:active {
+        cursor: grabbing;
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 
+            0 15px 30px rgba(238, 90, 36, 0.4),
+            0 0 0 1px rgba(255, 255, 255, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    .instructions {
+        margin-top: 40px;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 14px;
+        font-weight: 400;
+        letter-spacing: 0.3px;
+    }
+
+    @keyframes countUpdate {
+        0% { 
+            transform: scale(1) rotateY(0deg);
+            filter: brightness(1);
+        }
+        50% { 
+            transform: scale(1.15) rotateY(180deg);
+            filter: brightness(1.2);
+        }
+        100% { 
+            transform: scale(1) rotateY(360deg);
+            filter: brightness(1);
+        }
+    }
+
+    @keyframes pulse {
+        0%, 100% { 
+            box-shadow: 
+                0 20px 40px rgba(238, 90, 36, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+        50% { 
+            box-shadow: 
+                0 25px 50px rgba(238, 90, 36, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                0 0 30px rgba(255, 107, 107, 0.4);
+        }
+    }
+
+    .count-animate {
+        animation: countUpdate 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .button-pulse {
+        animation: pulse 0.6s ease-in-out;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            padding: 40px 30px;
+            margin: 20px;
+        }
+        
+        #count {
+            font-size: 72px;
+        }
+        
+        #dragButton {
+            width: 100px;
+            height: 100px;
+            font-size: 48px;
+        }
+    }
+</style>
+
+</head>
+<body>
+<div class="container">
+    <h1>Drag Counter</h1>
+    <div id="count">0</div>
+    <div id="dragButton">+</div>
+    <div class="instructions">Drag left or right to change the counter</div>
+</div>
+<script>
+    const button = document.getElementById("dragButton");
+    const countDisplay = document.getElementById("count");
+
+    let count = 0;
+    let startX = 0;
+
+    // When user starts dragging
+    button.addEventListener("mousedown", (e) => {
+        startX = e.clientX;
+    });
+
+    // When user releases the drag
+    button.addEventListener("mouseup", (e) => {
+        let endX = e.clientX;
+        let difference = endX - startX;
+
+        if (difference > 30) {
+            // Dragged left to right
+            count++;
+        } else if (difference < -30) {
+            // Dragged right to left
+            count--;
+        }
+
+        countDisplay.textContent = count;
+        countDisplay.classList.add('count-animate');
+        button.classList.add('button-pulse');
+        
+        setTimeout(() => {
+            countDisplay.classList.remove('count-animate');
+            button.classList.remove('button-pulse');
+        }, 600);
+    });
+</script>
+<script>
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("service-worker.js")
+            .then(() => console.log("Service Worker Registered"));
+    }
+</script>
+
+
+</body>
+</html>
