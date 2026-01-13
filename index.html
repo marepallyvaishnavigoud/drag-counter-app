@@ -241,24 +241,45 @@
     let count = 0;
     let startX = 0;
 
-    // When user starts dragging
+    // Mouse events for desktop
     button.addEventListener("mousedown", (e) => {
         startX = e.clientX;
     });
 
-    // When user releases the drag
     button.addEventListener("mouseup", (e) => {
         let endX = e.clientX;
         let difference = endX - startX;
 
         if (difference > 30) {
-            // Dragged left to right
             count++;
         } else if (difference < -30) {
-            // Dragged right to left
             count--;
         }
 
+        updateCounter();
+    });
+
+    // Touch events for mobile
+    button.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+        e.preventDefault();
+    });
+
+    button.addEventListener("touchend", (e) => {
+        let endX = e.changedTouches[0].clientX;
+        let difference = endX - startX;
+
+        if (difference > 30) {
+            count++;
+        } else if (difference < -30) {
+            count--;
+        }
+
+        updateCounter();
+        e.preventDefault();
+    });
+
+    function updateCounter() {
         countDisplay.textContent = count;
         countDisplay.classList.add('count-animate');
         button.classList.add('button-pulse');
@@ -267,7 +288,7 @@
             countDisplay.classList.remove('count-animate');
             button.classList.remove('button-pulse');
         }, 600);
-    });
+    }
 </script>
 <script>
     if ("serviceWorker" in navigator) {
